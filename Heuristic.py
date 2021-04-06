@@ -58,8 +58,6 @@ def get_evaluation(last_move: int, remaining_tokens: list[int]) -> float:
                 prime_divider = integer
     multiples_count = 0
     for integer in remaining_tokens:
-        if integer > prime_divider:
-            continue
         if integer % prime_divider == 0:
             multiples_count = multiples_count + 1
     if multiples_count % 2 != 0:
