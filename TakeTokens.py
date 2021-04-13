@@ -1,12 +1,12 @@
 #!/usr/bin/python
+
 import sys
 import getopt
-# from Heuristic import static_board_evaluation
+import AlphaBeta
 
 def seq_check(size, lst_taken) -> bool:
-    '''Check for correctness of ordered sequence'''
-
-    full_lst = [i for i in range(1 , size + 1)]
+    """Check for correctness of ordered sequence"""
+    full_lst = set(i for i in range(1 , size + 1))
     if lst_taken[0] < -(size // -2): # first move is odd-numbered token that is strictly less than n/2
         last_elem = lst_taken[0]
         full_lst.remove(last_elem)
@@ -17,16 +17,22 @@ def seq_check(size, lst_taken) -> bool:
                 if e in full_lst:
                     full_lst.remove(e)
                 else:
+                    print(1)
                     return False
             else:
+                print(2)
                 return False
         return True
+    print(3)
     return False
 
 
 def main(argv):
-    '''Parse command-line input and construct pruning object'''
-    
+    """
+    Parse command-line input and compute the best move for the current player using Alpha-Beta pruning algorithm.\n
+    Return Move, Value, Number of Nodes Visited, Number of Nodes Evaluated, Max Depth Reached, Avg Effective Branching Factor
+    """
+
     try:
         # simulate help display
         opts, _ = getopt.getopt(argv,"h", ["help"])
@@ -53,6 +59,8 @@ def main(argv):
             lst_taken_token = list(map(int, argv[2:-1]))
             assert(len(lst_taken_token) == taken_tokens)
             assert(seq_check(tokens, lst_taken_token))
+        else:
+            lst_taken_token = []
         depth = int(argv[-1])
 
     except:
@@ -60,13 +68,10 @@ def main(argv):
         print('TakenTokens.py: error: invalid format')
         sys.exit(2)
 
-    # TODO 
-    # what do we do with those params?
-    # analysis.py for 10 random testcase
+    # TODO perform search
     player = 'Max' if taken_tokens % 2 == 0 else 'Min'
-    print(player, tokens, taken_tokens, lst_taken_token, depth)
+    return player, tokens, taken_tokens, lst_taken_token, depth
 
-  
 
 if __name__ == "__main__":
     main(sys.argv[1:])
