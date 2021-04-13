@@ -2,6 +2,7 @@
 # remaining_tokens: list of integers
 # is_max_turn: boolean, max turn (true), min turn (false)
 
+# print(static_board_evaluation(5, [3, 2, 6, 8, 10, 11], True))
 def static_board_evaluation(last_move: int, remaining_tokens: list[int], is_max_turn: bool) -> float:
     if is_end_game(last_move, remaining_tokens):
         evaluation = 1
