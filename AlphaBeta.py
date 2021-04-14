@@ -38,5 +38,3 @@ def alphabeta(node, depth, a, b, maximizingPlayer, last_move):
             if b <= a:
                 break # b cut-off
         return v
-
-

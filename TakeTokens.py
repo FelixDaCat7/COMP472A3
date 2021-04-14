@@ -56,7 +56,7 @@ def main(argv):
         tokens = int(argv[0])
         taken_tokens = int(argv[1])
         assert(len(argv) > 2)
-        if taken_tokens != 0:
+        if taken_tokens:
             lst_taken_token = list(map(int, argv[2:-1]))
             assert(len(lst_taken_token) == taken_tokens)
             assert(seq_check(tokens, lst_taken_token))
@@ -75,10 +75,10 @@ def main(argv):
         node.remove(e)
 
     # compute alphabeta
-    print(alphabeta(node, depth, -np.inf, np.inf, taken_tokens % 2 == 0, lst_taken_token[-1]))
-    
-    return
+    if taken_tokens:
+        print(alphabeta(node, depth if depth else np.inf, -np.inf, np.inf, taken_tokens % 2 == 0, lst_taken_token[-1]))
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+    # main(['7','1','1','0'])
