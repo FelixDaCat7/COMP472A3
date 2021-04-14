@@ -1,9 +1,9 @@
 # last_move: integer
-# remaining_tokens: list of integers
+# remaining_tokens: set of integers
 # is_max_turn: boolean, max turn (true), min turn (false)
 
 # print(static_board_evaluation(5, [3, 2, 6, 8, 10, 11], True))
-def static_board_evaluation(last_move: int, remaining_tokens: list[int], is_max_turn: bool) -> float:
+def static_board_evaluation(last_move, remaining_tokens, is_max_turn) -> float:
     if is_end_game(last_move, remaining_tokens):
         evaluation = 1
     else:
@@ -14,14 +14,14 @@ def static_board_evaluation(last_move: int, remaining_tokens: list[int], is_max_
         return -evaluation
 
 
-def is_end_game(last_move: int, remaining_tokens: list[int]) -> bool:
+def is_end_game(last_move, remaining_tokens) -> bool:
     for token in remaining_tokens:
         if last_move % token == 0 or token % last_move == 0:
             return False
     return True
 
 
-def is_prime(possibly_prime: int) -> bool:
+def is_prime(possibly_prime) -> bool:
     is_prime_number = True
     for integer in range(2, possibly_prime):
         if possibly_prime % integer == 0:
@@ -30,7 +30,7 @@ def is_prime(possibly_prime: int) -> bool:
     return is_prime_number
 
 
-def get_evaluation(last_move: int, remaining_tokens: list[int]) -> float:
+def get_evaluation(last_move, remaining_tokens) -> float:
     # case 1: 1 is still in remaining tokens
     for token in remaining_tokens:
         if token == 1:

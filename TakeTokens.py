@@ -2,11 +2,12 @@
 
 import sys
 import getopt
-import AlphaBeta
+import numpy as np
+from AlphaBeta import alphabeta
 
 def seq_check(size, lst_taken) -> bool:
     """Check for correctness of ordered sequence"""
-    full_lst = set(i for i in range(1 , size + 1))
+    full_lst = [i for i in range(1 , size + 1)]
     if lst_taken[0] < -(size // -2): # first move is odd-numbered token that is strictly less than n/2
         last_elem = lst_taken[0]
         full_lst.remove(last_elem)
@@ -68,9 +69,15 @@ def main(argv):
         print('TakenTokens.py: error: invalid format')
         sys.exit(2)
 
-    # TODO perform search
-    player = 'Max' if taken_tokens % 2 == 0 else 'Min'
-    return player, tokens, taken_tokens, lst_taken_token, depth
+    # create root node
+    node = [i for i in range(1 , tokens + 1)]
+    for e in lst_taken_token:
+        node.remove(e)
+
+    # compute alphabeta
+    print(alphabeta(node, depth, -np.inf, np.inf, taken_tokens % 2 == 0, lst_taken_token[-1]))
+    
+    return
 
 
 if __name__ == "__main__":
