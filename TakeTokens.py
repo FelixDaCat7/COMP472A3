@@ -3,30 +3,8 @@
 import sys
 import getopt
 import numpy as np
-from AlphaBeta import alphabeta
-
-def seq_check(size, lst_taken) -> bool:
-    """Check for correctness of ordered sequence"""
-    full_lst = [i for i in range(1 , size + 1)]
-    if lst_taken[0] < -(size // -2): # first move is odd-numbered token that is strictly less than n/2
-        last_elem = lst_taken[0]
-        full_lst.remove(last_elem)
-        for e in lst_taken[1:]:
-            # subsequent moves must be a multiple or factor of the last move
-            if  (e % last_elem == 0) or (last_elem % e == 0): 
-                last_elem = e
-                if e in full_lst:
-                    full_lst.remove(e)
-                else:
-                    print(1)
-                    return False
-            else:
-                print(2)
-                return False
-        return True
-    print(3)
-    return False
-
+import time
+from AlphaBeta import alpha_beta
 
 def main(argv):
     """
@@ -55,11 +33,8 @@ def main(argv):
         # parse params
         tokens = int(argv[0])
         taken_tokens = int(argv[1])
-        assert(len(argv) > 2)
         if taken_tokens:
             lst_taken_token = list(map(int, argv[2:-1]))
-            assert(len(lst_taken_token) == taken_tokens)
-            assert(seq_check(tokens, lst_taken_token))
         else:
             lst_taken_token = []
         depth = int(argv[-1])
@@ -74,11 +49,19 @@ def main(argv):
     for e in lst_taken_token:
         node.remove(e)
 
-    # compute alphabeta
+    # check last move existence
+    last_move = None
     if taken_tokens:
-        print(alphabeta(node, depth if depth else np.inf, -np.inf, np.inf, taken_tokens % 2 == 0, lst_taken_token[-1]))
+        last_move = lst_taken_token[-1]
+    if not depth:
+        depth = np.inf
+
+    return alpha_beta(node, depth, -np.inf, np.inf, taken_tokens % 2 == 0, last_move)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
-    # main(['7','1','1','0'])
+    start_time = time.time()
+    # print(main(sys.argv[1:]))
+    print(main(['3','0','0']))
+    execution_time = (time.time() - start_time)
+    print("--- %s seconds ---" % execution_time + '\n')

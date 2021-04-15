@@ -1,30 +1,13 @@
 import numpy as np
-import Heuristic as heuristic
 
-def gen_children(node, last_move) -> dict():
-    """
-    Generate all possible children for node
-    """
-    children = dict()
-    for e in node:
-        if (e % last_move == 0) or (last_move % e == 0):
-            new_node = node.copy()
-            new_node.remove(e)
-            children[e] = new_node
-    return children
-
-
-def alphabeta(node, depth, a, b, maximizingPlayer, last_move):
-    """
-    Alpha-Beta Pruning Algorithm based on slides
-    """
-    if depth == 0 or heuristic.is_end_game(last_move, node):
-        return heuristic.static_board_evaluation(last_move, node, maximizingPlayer)
+def alpha_beta(node, depth, a, b, maximizingPlayer, last_move):
+    if depth == 0 or is_end_game(last_move, node):
+        return static_board_evaluation(last_move, node, False)
     if maximizingPlayer:
         v = -np.inf
         children = gen_children(node, last_move)
-        for new_move, new_node in children.items():
-            v = max(v, alphabeta(new_node, depth - 1, a, b, False, new_move))
+        for c_move, c_node in children.items():
+            v = max(v, alpha_beta(c_node, depth - 1, a, b, False, c_move))
             a = max(a, v)
             if b <= a:
                 break # b cut-off
@@ -32,9 +15,102 @@ def alphabeta(node, depth, a, b, maximizingPlayer, last_move):
     else:
         v = np.inf
         children = gen_children(node, last_move)
-        for new_move, new_node in children.items():
-            v = min(v, alphabeta(new_node, depth - 1, a, b, True, new_move))
-            a = min(a, v)
+        for c_move, c_node in children.items():
+            v = min(v, alpha_beta(c_node, depth - 1, a, b, True, c_move))
+            b = min(b, v)
             if b <= a:
                 break # b cut-off
         return v
+
+def gen_children(node, last_move) -> dict():
+    """
+    Generate all possible children for node
+    """
+    children = dict()
+    if last_move is None:
+        for e in node:
+            if  e < -(len(node) // -2) and e % 2 == 1:
+                c_node = node.copy()
+                c_node.remove(e)
+                children[e] = c_node
+    else:
+        for e in node:
+            if (e % last_move == 0) or (last_move % e == 0):
+                c_node = node.copy()
+                c_node.remove(e)
+                children[e] = c_node
+    return children
+
+# last_move: integer
+# remaining_tokens: set of integers
+# is_max_turn: boolean, max turn (true), min turn (false)
+
+# print(static_board_evaluation(5, [3, 2, 6, 8, 10, 11], True))
+def static_board_evaluation(last_move, remaining_tokens, is_max_turn) -> float:
+    if is_end_game(last_move, remaining_tokens):
+        evaluation = 1
+    else:
+        evaluation = get_evaluation(last_move, remaining_tokens)
+    if is_max_turn:
+        return evaluation
+    else:
+        return -evaluation
+
+
+def is_end_game(last_move, remaining_tokens) -> bool:
+    if last_move is None:
+        for e in remaining_tokens:
+            if  e < -(len(remaining_tokens) // -2) and e % 2 == 1:
+                return False
+    else:
+        for token in remaining_tokens:
+            if last_move % token == 0 or token % last_move == 0:
+                return False
+    return True
+
+
+def is_prime(possibly_prime) -> bool:
+    is_prime_number = True
+    for integer in range(2, possibly_prime):
+        if possibly_prime % integer == 0:
+            is_prime_number = False
+            break
+    return is_prime_number
+
+
+def get_evaluation(last_move, remaining_tokens) -> float:
+    # case 1: 1 is still in remaining tokens
+    for token in remaining_tokens:
+        if token == 1:
+            return 0
+    # case 2: 1 is the last move
+    if last_move == 1:
+        children = gen_children(remaining_tokens, last_move)
+        if len(children) % 2 != 0:
+            return 0.5
+        else:
+            return -0.5
+    # case 3: last move is prime
+    if is_prime(last_move):
+        multiple_count = 0
+        for token in remaining_tokens:
+            if token % last_move == 0:
+                multiple_count = multiple_count + 1
+        if multiple_count % 2 != 0:
+            return 0.7
+        else:
+            return -0.7
+    # case 4: last move is composite
+    prime_divider = 0
+    for integer in range(2, last_move):
+        if last_move % integer == 0:
+            if is_prime(integer):
+                prime_divider = integer
+    multiples_count = 0
+    for integer in remaining_tokens:
+        if integer % prime_divider == 0:
+            multiples_count = multiples_count + 1
+    if multiples_count % 2 != 0:
+        return 0.6
+    else:
+        return -0.6
