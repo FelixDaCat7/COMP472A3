@@ -4,7 +4,7 @@ import sys
 import getopt
 import numpy as np
 import time
-from AlphaBeta import alpha_beta
+from AlphaBeta import *
 
 def main(argv):
     """
@@ -53,15 +53,22 @@ def main(argv):
     last_move = None
     if taken_tokens:
         last_move = lst_taken_token[-1]
+    # check depth
     if not depth:
         depth = np.inf
-
-    return alpha_beta(node, depth, -np.inf, np.inf, taken_tokens % 2 == 0, last_move)
-
+    # check current player
+    isMax = taken_tokens % 2 == 0
+    # perform alphabeta
+    a = AlphaBeta(node,       # node
+                  depth,      # depth
+                  -np.inf,    # a
+                  np.inf,     # b
+                  isMax,      # maximizingPlayer
+                  last_move)  # last move
+    return a.best_move, a.v, a.n_visited, a.n_evaluated, a.max_depth
 
 if __name__ == "__main__":
-    start_time = time.time()
     # print(main(sys.argv[1:]))
-    print(main(['3','0','0']))
-    execution_time = (time.time() - start_time)
-    print("--- %s seconds ---" % execution_time + '\n')
+    # print(main(['3', '0', '0']))
+    # print(main(['7', '1', '1', '2']))
+    print(main(['10','3','4', '2', '6', '4']))

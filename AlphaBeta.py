@@ -1,26 +1,48 @@
 import numpy as np
 
-def alpha_beta(node, depth, a, b, maximizingPlayer, last_move):
-    if depth == 0 or is_end_game(last_move, node):
-        return static_board_evaluation(last_move, node, False)
-    if maximizingPlayer:
-        v = -np.inf
-        children = gen_children(node, last_move)
-        for c_move, c_node in children.items():
-            v = max(v, alpha_beta(c_node, depth - 1, a, b, False, c_move))
-            a = max(a, v)
-            if b <= a:
-                break # b cut-off
-        return v
-    else:
-        v = np.inf
-        children = gen_children(node, last_move)
-        for c_move, c_node in children.items():
-            v = min(v, alpha_beta(c_node, depth - 1, a, b, True, c_move))
-            b = min(b, v)
-            if b <= a:
-                break # b cut-off
-        return v
+class AlphaBeta:
+    def __init__(self, node, depth, a, b, isMax, last_move):
+        self.best_move = 0
+        self.n_visited = 0   # num visited nodes
+        self.n_evaluated = 0 # num visited nodes
+        self.max_depth = 0   # max depth reached
+        self.v = self.alpha_beta(node,       # node
+                                 depth,      # depth
+                                 -np.inf,    # a
+                                 np.inf,     # b
+                                 isMax,      # maximizingPlayer
+                                 last_move,  # last move
+                                 0)          # max depth
+
+    def alpha_beta(self, node, depth, a, b, maximizingPlayer, last_move, max_depth):
+        self.n_visited += 1
+        if depth == 0 or is_end_game(last_move, node):
+            self.n_evaluated += 1
+            if self.max_depth < max_depth:
+                self.max_depth = max_depth
+            return static_board_evaluation(last_move, node, maximizingPlayer)
+        if maximizingPlayer:
+            v = -np.inf
+            children = gen_children(node, last_move)
+            for c_move, c_node in children.items():
+                child_v = self.alpha_beta(c_node, depth - 1, a, b, False, c_move, 
+                                          max_depth + 1)
+                v = max(v, child_v)
+                a = max(a, v)
+                if b <= a:
+                    break # b cut-off
+            return v
+        else:
+            v = np.inf
+            children = gen_children(node, last_move)
+            for c_move, c_node in children.items():
+                child_v = self.alpha_beta(c_node, depth - 1, a, b, True, c_move, 
+                                          max_depth + 1)
+                v = min(v, child_v)
+                b = min(b, v)
+                if b <= a:
+                    break # a cut-off
+            return v
 
 def gen_children(node, last_move) -> dict():
     """
@@ -48,13 +70,10 @@ def gen_children(node, last_move) -> dict():
 # print(static_board_evaluation(5, [3, 2, 6, 8, 10, 11], True))
 def static_board_evaluation(last_move, remaining_tokens, is_max_turn) -> float:
     if is_end_game(last_move, remaining_tokens):
-        evaluation = 1
+        return -1 if is_max_turn else 1
     else:
         evaluation = get_evaluation(last_move, remaining_tokens)
-    if is_max_turn:
-        return evaluation
-    else:
-        return -evaluation
+        return evaluation if is_max_turn else -evaluation
 
 
 def is_end_game(last_move, remaining_tokens) -> bool:
@@ -80,9 +99,8 @@ def is_prime(possibly_prime) -> bool:
 
 def get_evaluation(last_move, remaining_tokens) -> float:
     # case 1: 1 is still in remaining tokens
-    for token in remaining_tokens:
-        if token == 1:
-            return 0
+    if remaining_tokens[0] == 1:
+        return 0
     # case 2: 1 is the last move
     if last_move == 1:
         children = gen_children(remaining_tokens, last_move)
