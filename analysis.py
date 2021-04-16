@@ -4,14 +4,16 @@ import os
 import TakeTokens
 
 def main(args):
-    '''
+    """
     Analyse and compare the performance of the game using input testcases.
-    '''
-
+    """
+    results = [] # list of all results
     with args.i as f:  # read input file
         for line in f:  # Add input puzzles into puzzle list
             inputs = line.strip().split()[1:]
-            print(TakeTokens.main(inputs))
+            results.append(np.array(TakeTokens.main(inputs)))
+    results = np.array(results)
+    print(results)
 
             
 if __name__ == "__main__":

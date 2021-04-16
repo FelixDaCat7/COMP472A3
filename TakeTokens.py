@@ -44,31 +44,12 @@ def main(argv):
         print('TakenTokens.py: error: invalid format')
         sys.exit(2)
 
-    # create root node
-    node = [i for i in range(1 , tokens + 1)]
-    for e in lst_taken_token:
-        node.remove(e)
-
-    # check last move existence
-    last_move = None
-    if taken_tokens:
-        last_move = lst_taken_token[-1]
-    # check depth
-    if not depth:
-        depth = np.inf
-    # check current player
-    isMax = taken_tokens % 2 == 0
     # perform alphabeta
-    a = AlphaBeta(node,       # node
-                  depth,      # depth
-                  -np.inf,    # a
-                  np.inf,     # b
-                  isMax,      # maximizingPlayer
-                  last_move)  # last move
-    return a.best_move, a.v, a.n_visited, a.n_evaluated, a.max_depth
+    a = AlphaBeta(tokens, taken_tokens, lst_taken_token, depth)
+    return a.output()
 
 if __name__ == "__main__":
-    # print(main(sys.argv[1:]))
-    # print(main(['3', '0', '0']))
-    # print(main(['7', '1', '1', '2']))
-    print(main(['10','3','4', '2', '6', '4']))
+    main(sys.argv[1:])
+    # main(['3', '0', '0'])
+    # main(['7', '1', '1', '2'])
+    # main(['10','3','4', '2', '6', '4'])
