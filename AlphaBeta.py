@@ -95,7 +95,7 @@ class AlphaBeta:
             if child.depth == 1:
                 self.root_children[child] = child_v
             if b <= a:
-                break # b cut-off
+                break # a cut-off
         return v
 
     def terminal_test(self, state) -> bool:
