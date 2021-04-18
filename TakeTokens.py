@@ -6,6 +6,7 @@ import numpy as np
 import time
 from AlphaBeta import *
 
+
 def main(argv):
     """
     Parse command-line input and compute the best move for the current player using Alpha-Beta pruning algorithm.\n
@@ -14,7 +15,7 @@ def main(argv):
 
     try:
         # simulate help display
-        opts, _ = getopt.getopt(argv,"h", ["help"])
+        opts, _ = getopt.getopt(argv, "h", ["help"])
         for opt, _ in opts:
             if opt == '-h' or opt == '--help':
                 print('usage: TakeTokens.py [-h] [Tokens] [Taken] N [N ...] [Depth]\n\n'
@@ -29,7 +30,7 @@ def main(argv):
                       'Depth        Search depth. If depth is 0, search to end game states \n'
                       '             (i.e., states where a winner is determined).')
                 return
-        
+
         # parse params
         tokens = int(argv[0])
         taken_tokens = int(argv[1])
@@ -47,6 +48,7 @@ def main(argv):
     # perform alphabeta
     a = AlphaBeta(tokens, taken_tokens, lst_taken_token, depth)
     return a.output()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
