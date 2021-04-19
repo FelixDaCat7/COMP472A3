@@ -8,7 +8,7 @@ Project requires Numpy
 To run all ten tests
 $ python analysis.py -i inputs.txt
 
-Gabriel Desroches 40099529
-Felix Morin 40063253
-Richard Nguyen 40076763
-Vladislav Voznitsa 40055540
+Gabriel Desroches 40099529  
+Felix Morin 40063253  
+Richard Nguyen 40076763  
+Vladislav Voznitsa 40055540  
