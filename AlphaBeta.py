@@ -115,12 +115,16 @@ class AlphaBeta:
               f'Number of Nodes Evaluated: {self.n_eval}\n'
               f'Max Depth Reached: {self.max_depth}\n'
               f'Avg Effective Branching Factor: {self.factor:.1f}\n')
+<<<<<<< HEAD
         return (f'{self.best_move}',
                 f'{self.v:.1f}',
                 f'{self.n_visited}',
                 f'{self.n_eval}',
                 f'{self.max_depth}',
                 f'{self.factor:.1f}')
+=======
+        return self.best_move, self.v, self.n_visited, self.n_eval, self.max_depth, self.factor
+>>>>>>> e74038512190609f40de71ca61c973c47267d356
 
 
 def gen_children(state) -> list():
